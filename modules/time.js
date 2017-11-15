@@ -11,7 +11,7 @@ var _export = {
     getTimeUntil: function (input) {
         let targetTime = _export.convert.toDateObject(input).getUnixTime()
         let currentTime = (new Date()).getUnixTime()
-        return targetTime > currentTime ? targetTime - currentTime : 0;
+        return targetTime > currentTime ? targetTime + 1 - currentTime : 0;
     },
     convert: {
         toDateObject: function(input) {

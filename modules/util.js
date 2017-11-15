@@ -1,29 +1,42 @@
+// Tools
 var _ = require('lodash')
-var web3 = require('web3')
-var time = require('./time.js')
+var BigNumber = require('bignumber.js')
+var Web3Factory = require('../modules/web3_factory')
 
-module.exports = {
+// Modules
+var web3 = Web3Factory.create({testrpc: true})
+var time = require('./time')
+
+var _export = {
     network: {
-        isTestingNetwork: function (network) {
+        isTestingNetwork: (network) => {
             return network == 'test' || network == 'develop' || network == 'development'
         }
     },
     config: {
-        getAccountValue: function (account, accounts) {
+        getAccountValue: (account, accounts) => {
             return typeof account === 'number' ? accounts[account] : account
         },
-        getWeiValue: function (params) {
-            return web3.utils.toWei(params[0], params[1])
+        getWeiValue: (params) => {
+            return new BigNumber(web3.utils.toWei(params[0], params[1]))
         },
-        getDurationValue: function (params) {
+        getDurationValue: (params) => {
             return typeof params === 'number' ? params : params[0] * time[params[1]]
         },
-        getTimestampValue: function (param) {
+        getTimestampValue: (param) => {
             return typeof param === 'number' ? param : time.convert.toUnixTime(param)
         }
     },
+    transaction: {
+        getGasPriceAsync: async () => {
+            return web3.eth.getGasPricePromise()
+        },
+        getTransactionCost: async (transaction) => {
+            return (new BigNumber(transaction.receipt.gasUsed)).mul(await _export.transaction.getGasPriceAsync())
+        }
+    },
     errors: {
-        throws: function(error, message) {
+        throws: (error, message) => {
             return new Promise((resolve, reject) => {
                 if (error.toString().indexOf("invalid opcode") > -1) {
                     return resolve("Expected evm error")
@@ -34,7 +47,7 @@ module.exports = {
         }
     },
     events: {
-        get: function(contract, filter) {
+        get: (contract, filter) => {
             return new Promise((resolve, reject) => {
                 var event = contract[filter.event]()
                 event.watch()
@@ -49,7 +62,7 @@ module.exports = {
                 event.stopWatching()
             })
         },
-        assert: function(contract, filter) {
+        assert: (contract, filter) => {
             return new Promise((resolve, reject) => {
                 var event = contract[filter.event]()
                 event.watch()
@@ -68,3 +81,5 @@ module.exports = {
         }
     }
 }
+
+module.exports = _export
