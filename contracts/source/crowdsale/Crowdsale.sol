@@ -291,6 +291,16 @@ contract Crowdsale is ICrowdsale, Ownership {
 
 
     /**
+     * Returns true if the contract is currently in the ended stage
+     *
+     * @return True if ended
+     */
+    function isEnded() public view returns (bool) {
+        return stage == Stages.Ended;
+    }
+
+
+    /**
      * Returns true if `_beneficiary` has a balance allocated
      *
      * @param _beneficiary The account that the balance is allocated for

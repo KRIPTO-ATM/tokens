@@ -3,7 +3,12 @@ module.exports = {
         test: {
             precision: 4, // Amount of decimals
             tokenChanger: {
-                contract: 'SpecializedTokenChangerProxy'
+                contract: 'SpecializedTokenChangerProxy',
+                authentication: {
+                    whitelist: {
+                        require: true
+                    }
+                }
             },
             security: {
                 token: {
@@ -136,13 +141,13 @@ module.exports = {
                         accepted: [500, 'finney']
                     },
                     publicsale: {
-                        start: 'January 10, 2018 12:00:00 GMT+0000',
+                        start: 'December 13, 2017 12:00:00 GMT+0000',
                         soft: [5000, 'ether'],
                         hard: [25000, 'ether'],
                         accepted: [40, 'finney']
                     },
                     phases: [{
-                        duration: [49, 'days'], // Presale - Until Jan 10, 2018
+                        duration: [21, 'days'], // Presale - Until Dec 13, 2017
                         rate: 500,
                         lockupPeriod: [30, 'days'],
                         usesVolumeMultiplier: true
@@ -249,7 +254,12 @@ module.exports = {
         main: {
             precision: 4, // Amount of decimals
             tokenChanger: {
-                contract: 'KATMTokenChanger'
+                contract: 'KATMTokenChanger',
+                authentication: {
+                    whitelist: {
+                        require: true
+                    }
+                }
             },
             security: {
                 token: {
@@ -382,13 +392,13 @@ module.exports = {
                         accepted: [500, 'finney']
                     },
                     publicsale: {
-                        start: 'January 10, 2018 12:00:00 GMT+0000',
+                        start: 'December 13, 2017 12:00:00 GMT+0000',
                         soft: [5000, 'ether'],
                         hard: [25000, 'ether'],
                         accepted: [40, 'finney']
                     },
                     phases: [{
-                        duration: [49, 'days'], // Presale - Until Jan 10, 2018
+                        duration: [21, 'days'], // Presale - Until Dec 13, 2017
                         rate: 500,
                         lockupPeriod: [30, 'days'],
                         usesVolumeMultiplier: true

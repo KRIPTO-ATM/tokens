@@ -4,9 +4,7 @@ import "./crowdsale/Crowdsale.sol";
 import "./token/retriever/TokenRetriever.sol";
 import "../infrastructure/authentication/IAuthenticator.sol";
 import "../infrastructure/authentication/IAuthenticationManager.sol";
-import "../infrastructure/authentication/whitelist/IWhitelist.sol";
 import "../integration/wings/IWingsAdapter.sol";
-import "../integration/dcorp/IDcorpMemberAdapter.sol";
 
 /**
  * KATXCrowdsale
@@ -19,7 +17,7 @@ import "../integration/dcorp/IDcorpMemberAdapter.sol";
  * #created 10/11/2017
  * #author Frank Bonnet
  */
-contract KATXCrowdsale is Crowdsale, TokenRetriever, IAuthenticationManager, IWingsAdapter, IDcorpMemberAdapter {
+contract KATXCrowdsale is Crowdsale, TokenRetriever, IAuthenticationManager, IWingsAdapter {
 
     // Authentication
     IAuthenticator private authenticator;

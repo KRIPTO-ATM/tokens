@@ -86,6 +86,15 @@ var deploy = async function(deployer, network, accounts, config) {
   await deployer.deploy(TokenChanger, securityToken.address, utilityToken.address)
   let tokenChanger = await TokenChanger.deployed()
 
+  // Setup token changer
+  if (typeof config.tokenChanger.authentication.whitelist === 'object') {
+    await tokenChanger.setupWhitelist(
+      typeof config.tokenChanger.authentication.whitelist.address === 'string' ? config.tokenChanger.authentication.whitelist.address : whitelist.address, 
+      config.tokenChanger.authentication.whitelist.require)    
+  }
+
+  await tokenChanger.deploy()
+
   // Configure security token
   await securityToken.addOwner(tokenChanger.address)
   await securityToken.addOwner(securityCrowdsale.address)

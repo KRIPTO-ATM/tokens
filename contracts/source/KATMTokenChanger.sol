@@ -4,6 +4,8 @@ import "./token/changer/TokenChanger.sol";
 import "./token/observer/TokenObserver.sol";
 import "./token/retriever/TokenRetriever.sol";
 import "../infrastructure/ownership/TransferableOwnership.sol";
+import "../infrastructure/authentication/IAuthenticator.sol";
+import "../infrastructure/authentication/IAuthenticationManager.sol";
 
 /**
  * ATM Token Changer
@@ -20,7 +22,40 @@ import "../infrastructure/ownership/TransferableOwnership.sol";
  * #created 30/10/2017
  * #author Frank Bonnet
  */
-contract KATMTokenChanger is TokenChanger, TokenObserver, TransferableOwnership, TokenRetriever {
+contract KATMTokenChanger is TokenChanger, TokenObserver, TransferableOwnership, TokenRetriever, IAuthenticationManager {
+
+    enum Stages {
+        Deploying,
+        Deployed
+    }
+
+    Stages public stage;
+
+    // Authentication
+    IAuthenticator private authenticator;
+    bool private requireAuthentication;
+
+
+    /**
+     * Throw if at stage other than current stage
+     * 
+     * @param _stage expected stage to test for
+     */
+    modifier at_stage(Stages _stage) {
+        require(stage == _stage);
+        _;
+    }
+
+
+    /**
+     * Throw if not authenticated
+     * 
+     * @param _account The account that is authenticated
+     */
+    modifier authenticate(address _account) {
+        require(!requireAuthentication || authenticator.authenticate(_account));
+        _;
+    }
 
 
     /**
@@ -30,7 +65,57 @@ contract KATMTokenChanger is TokenChanger, TokenObserver, TransferableOwnership,
      * @param _utility Ref to the Utiltiy token smart-contract
      */
     function KATMTokenChanger(address _security, address _utility) public
-        TokenChanger(_security, _utility, 8000, 500, 4, false, true) {}
+        TokenChanger(_security, _utility, 8000, 500, 4, false, true) {
+        stage = Stages.Deploying;
+    }
+
+
+    /**
+     * Setup authentication
+     *
+     * @param _authenticator The address of the authenticator (whitelist)
+     * @param _requireAuthentication Wether the crowdale requires contributors to be authenticated
+     */
+    function setupWhitelist(address _authenticator, bool _requireAuthentication) public only_owner at_stage(Stages.Deploying) {
+        authenticator = IAuthenticator(_authenticator);
+        requireAuthentication = _requireAuthentication;
+    }
+
+
+    /**
+     * After calling the deploy function the crowdsale
+     * rules become immutable 
+     */
+    function deploy() public only_owner at_stage(Stages.Deploying) {
+        stage = Stages.Deployed;
+    }
+
+
+    /**
+     * Returns true if authentication is enabled and false 
+     * otherwise
+     *
+     * @return Whether the converter is currently authenticating or not
+     */
+    function isAuthenticating() public view returns (bool) {
+        return requireAuthentication;
+    }
+
+
+    /**
+     * Enable authentication
+     */
+    function enableAuthentication() public only_owner {
+        requireAuthentication = true;
+    }
+
+
+    /**
+     * Disable authentication
+     */
+    function disableAuthentication() public only_owner {
+        requireAuthentication = false;
+    }
 
 
     /**
@@ -61,9 +146,9 @@ contract KATMTokenChanger is TokenChanger, TokenObserver, TransferableOwnership,
      * @param _from The account or contract that send the transaction
      * @param _value The value of tokens that where received
      */
-    function onTokensReceived(address _token, address _from, uint _value) internal is_token(_token) {
+    function onTokensReceived(address _token, address _from, uint _value) internal is_token(_token) authenticate(_from) {
         require(_token == msg.sender);
-
+        
         // Convert tokens
         convert(_token, _from, _value);
     }
