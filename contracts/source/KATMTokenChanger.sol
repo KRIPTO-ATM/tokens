@@ -146,7 +146,7 @@ contract KATMTokenChanger is TokenChanger, TokenObserver, TransferableOwnership,
      * @param _from The account or contract that send the transaction
      * @param _value The value of tokens that where received
      */
-    function onTokensReceived(address _token, address _from, uint _value) internal is_token(_token) authenticate(_from) {
+    function onTokensReceived(address _token, address _from, uint _value) internal is_token(_token) authenticate(_from) at_stage(Stages.Deployed) {
         require(_token == msg.sender);
         
         // Convert tokens
