@@ -7,15 +7,30 @@ var Web3Factory = require('../modules/web3_factory')
 var web3 = Web3Factory.create({testrpc: true})
 var time = require('./time')
 
+var accounts
+var artifacts
 var _export = {
+    setAccounts: (_accounts) => {
+        accounts = _accounts
+    },
+    setArtifacts: (_artifacts) => {
+        artifacts = _artifacts
+    },
     network: {
         isTestingNetwork: (network) => {
             return network == 'test' || network == 'develop' || network == 'development'
         }
     },
     config: {
-        getAccountValue: (account, accounts) => {
-            return typeof account === 'number' ? accounts[account] : account
+        getAccountValue: (account) => {
+            if (typeof account === 'number') {
+                return accounts[account]
+            } else if (typeof account.deployed === 'object') {
+                let Contract = artifacts.require(account.deployed.contract)
+                return Contract.address
+            } else {
+                return account
+            }
         },
         getWeiValue: (params) => {
             return new BigNumber(web3.utils.toWei(params[0], params[1]))

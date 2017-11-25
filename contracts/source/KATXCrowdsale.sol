@@ -4,7 +4,7 @@ import "./crowdsale/Crowdsale.sol";
 import "./token/retriever/TokenRetriever.sol";
 import "../infrastructure/authentication/IAuthenticator.sol";
 import "../infrastructure/authentication/IAuthenticationManager.sol";
-import "../integration/wings/IWingsAdapter.sol";
+import "../thirdparty/wings/source/IWingsAdapter.sol";
 
 /**
  * KATXCrowdsale

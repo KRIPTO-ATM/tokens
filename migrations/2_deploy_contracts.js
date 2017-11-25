@@ -1,6 +1,7 @@
 var truffle = require('../truffle')
 var config = require('../config')
 var util = require('../modules/util')
+var dcorp = require('../modules/thirdparty/dcorp/deploy')
 
 // Contracts
 var Whitelist = artifacts.require('Whitelist')
@@ -21,7 +22,22 @@ var postDeploy = () => Promise.resolve()
 
 // Deploy
 var deploy = async function(deployer, network, accounts, config) {
-   if (await util.network.isTestingNetwork(network)) {
+  
+  // Setup
+  util.setArtifacts(artifacts)
+  util.setAccounts(accounts)
+  dcorp.setArtifacts(artifacts)
+  dcorp.setDeployer(deployer)
+
+  // Dynamic artifacts
+  SecurityToken = artifacts.require(config.security.token.contract)
+  UtilityToken = artifacts.require(config.utility.token.contract)
+  TokenChanger = artifacts.require(config.tokenChanger.contract)
+  SecurityCrowdsale = artifacts.require(config.security.crowdsale.contract)
+  UtilityCrowdsale = artifacts.require(config.utility.crowdsale.contract)
+
+  // Events
+  if (await util.network.isTestingNetwork(network)) {
     preDeploy = async function () {
       await deployer.deploy(Accounts, accounts)
     }
@@ -34,15 +50,11 @@ var deploy = async function(deployer, network, accounts, config) {
     }
   }
 
-  // Dynamic artifacts
-  SecurityToken = artifacts.require(config.security.token.contract)
-  UtilityToken = artifacts.require(config.utility.token.contract)
-  TokenChanger = artifacts.require(config.tokenChanger.contract)
-  SecurityCrowdsale = artifacts.require(config.security.crowdsale.contract)
-  UtilityCrowdsale = artifacts.require(config.utility.crowdsale.contract)
-
   // Before deploying
   await preDeploy()
+
+  // Dcorp
+  await dcorp.deploy(config)
 
   // Deploy Whitelist
   await deployer.deploy(Whitelist)
@@ -51,7 +63,6 @@ var deploy = async function(deployer, network, accounts, config) {
   // Deploy tokens
   await deployer.deploy(UtilityToken)
   
-
   // Deploy security
   await deployer.deploy(SecurityToken)
   await deployer.deploy(SecurityCrowdsale)
@@ -105,6 +116,9 @@ var deploy = async function(deployer, network, accounts, config) {
   await utilityToken.addOwner(utilityCrowdsale.address)
   await utilityToken.registerObserver(tokenChanger.address)
 
+  // Dcorp
+  await dcorp.setup(config)
+
   // After deploying
   await postDeploy()
 }
@@ -138,7 +152,7 @@ var setupCrowdsale = async function(crowdsale, token, whitelist, precision, conf
     Array.from(config.volumeMultipliers, val => util.config.getWeiValue(val.threshold)))
 
   await crowdsale.setupStakeholders(
-    Array.from(config.stakes.stakeholders, val => util.config.getAccountValue(val.account, accounts)), 
+    Array.from(config.stakes.stakeholders, val => util.config.getAccountValue(val.account)), 
     Array.from(config.stakes.stakeholders, val => val.eth), 
     Array.from(config.stakes.stakeholders, val => val.tokens),
     Array.from(config.stakes.stakeholders, val => val.overwriteReleaseDate),

@@ -1,6 +1,8 @@
 pragma solidity ^0.4.18;
 
 import "./ICrowdsale.sol";
+import "./proxy/CrowdsaleProxy.sol";
+import "./proxy/PersonalCrowdsaleProxy.sol";
 import "../token/IToken.sol";
 import "../token/IManagedToken.sol";
 import "../../infrastructure/ownership/Ownership.sol";
@@ -142,6 +144,10 @@ contract Crowdsale is ICrowdsale, Ownership {
     }
 
 
+    // Events
+    event ProxyCreated(address proxy, address beneficiary);
+
+
     /**
      * Allows the implementing contract to validate a 
      * contributing account
@@ -268,6 +274,66 @@ contract Crowdsale is ICrowdsale, Ownership {
         require(phases.length > 0);
         require(stakeholderPercentagesIndex.length > 0);
         stage = Stages.Deployed;
+    }
+
+
+    /**
+     * Deploy a contract that serves as a proxy to 
+     * the crowdsale
+     *
+     * @return The address of the deposit address
+     */
+    function createDepositAddress() public returns (address) {
+        address proxy = new CrowdsaleProxy(msg.sender, this);
+        ProxyCreated(proxy, msg.sender);
+        return proxy;
+    }
+
+
+    /**
+     * Deploy a contract that serves as a proxy to 
+     * the crowdsale
+     *
+     * @param _beneficiary The owner of the proxy
+     * @return The address of the deposit address
+     */
+    function createDepositAddressFor(address _beneficiary) public returns (address) {
+        address proxy = new CrowdsaleProxy(_beneficiary, this);
+        ProxyCreated(proxy, _beneficiary);
+        return proxy;
+    }
+
+
+    /**
+     * Deploy a contract that serves as a proxy to 
+     * the crowdsale
+     *
+     * Contributions through this address will be made 
+     * for msg.sender
+     *
+     * @return The address of the deposit address
+     */
+    function createPersonalDepositAddress() public returns (address) {
+        address proxy = new PersonalCrowdsaleProxy(msg.sender, this);
+        ProxyCreated(proxy, msg.sender);
+        return proxy;
+    }
+
+
+    /**
+     * Deploy a contract that serves as a proxy to 
+     * the crowdsale
+     *
+     * Contributions through this address will be made 
+     * for `_beneficiary`
+     *
+     * @param _beneficiary The owner of the proxy
+     * @return The address of the deposit address
+     */
+    function createPersonalDepositAddressFor(address _beneficiary) public returns (address) {
+        address proxy = new PersonalCrowdsaleProxy(_beneficiary, this);
+        ProxyCreated(proxy, _beneficiary);
+        return proxy;
     }
 
 
@@ -478,18 +544,23 @@ contract Crowdsale is ICrowdsale, Ownership {
 
 
     /**
-     * Receive Eth and issue tokens to the sender
+     * Receive ether and issue tokens to the sender
+     *
+     * @return The accepted ether amount
      */
-    function contribute() public payable {
-        _handleTransaction(msg.sender, msg.value);
+    function contribute() public payable returns (uint) {
+        return _handleTransaction(msg.sender, msg.value);
     }
 
 
     /**
-     * Receive Eth and issue tokens to `_beneficiary`
+     * Receive ether and issue tokens to `_beneficiary`
+     *
+     * @param _beneficiary The account that receives the tokens
+     * @return The accepted ether amount
      */
-    function contributeFor(address _beneficiary) public payable {
-        _handleTransaction(_beneficiary, msg.value);
+    function contributeFor(address _beneficiary) public payable returns (uint) {
+        return _handleTransaction(_beneficiary, msg.value);
     }
 
 
@@ -591,30 +662,34 @@ contract Crowdsale is ICrowdsale, Ownership {
 
 
     /**
-     * Handle incoming transactions
+     * Handle incoming transaction
      * 
      * @param _beneficiary Tokens are issued to this account
      * @param _received The amount that was received
+     * @return The accepted ether amount
      */
-    function _handleTransaction(address _beneficiary, uint _received) internal at_stage(Stages.InProgress) {
-
-        // Crowdsale is active
+    function _handleTransaction(address _beneficiary, uint _received) internal at_stage(Stages.InProgress) returns (uint) {
         require(now >= start && now <= crowdsaleEnd);
-
-        // Whitelist check
         require(isAcceptedContributor(_beneficiary));
 
         if (isInPresalePhase()) {
-            // When in presale phase
-            _handlePresaleTransaction(_beneficiary, _received);
+            return _handlePresaleTransaction(
+                _beneficiary, _received);
         } else {
-            // When in public sale
-            _handlePublicsaleTransaction(_beneficiary, _received);
+            return _handlePublicsaleTransaction(
+                _beneficiary, _received);
         }
     }
 
 
-    function _handlePresaleTransaction(address _beneficiary, uint _received) private {
+    /**
+     * Handle incoming transaction during the presale phase
+     * 
+     * @param _beneficiary Tokens are issued to this account
+     * @param _received The amount that was received
+     * @return The accepted ether amount
+     */
+    function _handlePresaleTransaction(address _beneficiary, uint _received) private returns (uint) {
         require(_received >= minAcceptedAmountPresale);
         require(raised < maxAmountPresale);
 
@@ -632,10 +707,18 @@ contract Crowdsale is ICrowdsale, Ownership {
 
         // Issue tokens
         _distributeTokens(_beneficiary, _received, acceptedAmount);
+        return acceptedAmount;
     }
 
 
-    function _handlePublicsaleTransaction(address _beneficiary, uint _received) private {
+    /**
+     * Handle incoming transaction during the publicsale phase
+     * 
+     * @param _beneficiary Tokens are issued to this account
+     * @param _received The amount that was received
+     * @return The accepted ether amount
+     */
+    function _handlePublicsaleTransaction(address _beneficiary, uint _received) private returns (uint) {
         require(_received >= minAcceptedAmount);
         require(raised >= minAmountPresale);
         require(raised < maxAmount);
@@ -654,9 +737,20 @@ contract Crowdsale is ICrowdsale, Ownership {
 
         // Issue tokens
         _distributeTokens(_beneficiary, _received, acceptedAmount);
+        return acceptedAmount;
     }
 
 
+    /**
+     * Distribute tokens 
+     *
+     * Tokens can be issued by instructing the token contract to create new tokens or by 
+     * allocating tokens and instructing the token contract to create the tokens later
+     * 
+     * @param _beneficiary Tokens are issued to this account
+     * @param _received The amount that was received
+     * @param _acceptedAmount The amount that was accepted
+     */
     function _distributeTokens(address _beneficiary, uint _received, uint _acceptedAmount) private {
         uint tokensToIssue = 0;
         uint phase = getCurrentPhase();
@@ -665,6 +759,7 @@ contract Crowdsale is ICrowdsale, Ownership {
             revert(); // Paused phase
         }
 
+        // Volume multipliers
         var (volumes, releaseDates) = getDistributionData(
             phase, _acceptedAmount);
         

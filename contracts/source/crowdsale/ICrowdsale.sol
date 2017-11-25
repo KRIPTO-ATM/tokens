@@ -86,7 +86,7 @@ interface ICrowdsale {
 
 
     /**
-     * Receive Eth and issue tokens to the sender
+     * Receive ether and issue tokens to the sender
      * 
      * This function requires that msg.sender is not a contract. This is required because it's 
      * not possible for a contract to specify a gas amount when calling the (internal) send() 
@@ -98,15 +98,20 @@ interface ICrowdsale {
 
 
     /**
-     * Receive Eth and issue tokens to the sender
+     * Receive ether and issue tokens to the sender
+     *
+     * @return The accepted ether amount
      */
-    function contribute() public payable;
+    function contribute() public payable returns (uint);
 
 
     /**
-     * Receive Eth and issue tokens to `_beneficiary`
+     * Receive ether and issue tokens to `_beneficiary`
+     *
+     * @param _beneficiary The account that receives the tokens
+     * @return The accepted ether amount
      */
-    function contributeFor(address _beneficiary) public payable;
+    function contributeFor(address _beneficiary) public payable returns (uint);
 
 
     /**

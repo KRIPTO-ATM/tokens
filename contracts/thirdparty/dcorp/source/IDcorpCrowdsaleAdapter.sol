@@ -18,25 +18,21 @@ interface IDcorpCrowdsaleAdapter {
     function isEnded() public view returns (bool);
 
 
-    /** 
-     * Get the allocated token balance of `_owner`
-     * 
-     * @param _owner The address from which the allocated token balance will be retrieved
-     * @return The allocated token balance
+    /**
+     * Receive ether and issue tokens to the sender
+     *
+     * @return The accepted ether amount
      */
-    function balanceOf(address _owner) public view returns (uint);
+    function contribute() public payable returns (uint);
 
 
     /**
-     * Receive Eth and issue tokens to the sender
+     * Receive ether and issue tokens to `_beneficiary`
+     *
+     * @param _beneficiary The account that receives the tokens
+     * @return The accepted ether amount
      */
-    function contribute() public payable;
-
-
-    /**
-     * Receive Eth and issue tokens to `_beneficiary`
-     */
-    function contributeFor(address _beneficiary) public payable;
+    function contributeFor(address _beneficiary) public payable returns (uint);
 
 
     /**
