@@ -369,23 +369,23 @@ contract DcorpCrowdsaleProxy is IDcorpCrowdsaleProxy, Ownership, TokenObserver, 
         uint weight = _getWeight(_beneficiary);
         uint received = msg.value;
 
+        // Contribute for beneficiary
+        uint acceptedAmount = crowdsale.contributeFor.value(received)(_beneficiary);
+
         // Record transaction
         if (!hasRecord(_beneficiary)) {
             records[_beneficiary] = Record(
-                weight, received, 0, recordIndex.push(_beneficiary) - 1);
+                weight, acceptedAmount, 0, recordIndex.push(_beneficiary) - 1);
             totalWeight += weight;
         } else {
             Record storage r = records[_beneficiary];
-            r.contributed += received;
+            r.contributed += acceptedAmount;
             if (weight < r.weight) {
                 // Adjust weight
                 r.weight = weight;
                 totalWeight -= r.weight - weight;
             }
         }
-
-        // Contribute for beneficiary
-        uint acceptedAmount = crowdsale.contributeFor.value(received)(_beneficiary);
 
         // Record conribution
         totalContributed += acceptedAmount;
