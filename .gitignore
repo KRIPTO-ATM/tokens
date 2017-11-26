@@ -10,5 +10,3 @@ coverage.json
 .soliumrc.json
 circle.yml
 test_grouping
-/contracts/integration/dcorp/DcorpMemberProxy.sol
-/contracts/source/thirdparty

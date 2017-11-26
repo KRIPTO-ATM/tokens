@@ -10,6 +10,7 @@ module.exports = {
       host: "localhost",
       port: 8547,
       network_id: 1, // Official Ethereum network 
+      gas: 4500000,
       from: "0x3cAf983aCCccc2551195e0809B7824DA6FDe4EC8"
     }
   },

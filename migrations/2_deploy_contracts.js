@@ -3,6 +3,9 @@ var config = require('../config')
 var util = require('../modules/util')
 var dcorp = require('../modules/thirdparty/dcorp/deploy')
 
+// Settings
+var deployingAddress = '0x3cAf983aCCccc2551195e0809B7824DA6FDe4EC8'
+
 // Contracts
 var Whitelist = artifacts.require('Whitelist')
 
@@ -59,9 +62,6 @@ var deploy = async function(deployer, network, accounts, config) {
   // Deploy Whitelist
   await deployer.deploy(Whitelist)
   let whitelist = await Whitelist.deployed()
-
-  // Deploy tokens
-  await deployer.deploy(UtilityToken)
   
   // Deploy security
   await deployer.deploy(SecurityToken)

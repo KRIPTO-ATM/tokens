@@ -21,7 +21,7 @@ contract KATXToken is ManagedToken, Observable, TokenRetriever {
     /**
      * Construct the managed utility token
      */
-    function KATXToken() public ManagedToken("KATM Utility", "KATX", 8, false) {}
+    function KATXToken() public ManagedToken("KATM Utility", "KATX", 8, true) {}
 
 
     /**

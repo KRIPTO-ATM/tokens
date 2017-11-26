@@ -555,9 +555,9 @@ module.exports = {
                 thirdparty: {
                     dcorp: {
                         proxy: {
-                            deploy: {
-                                contract: 'KATXDcorpMemberProxy'
-                            },
+                            deploy: [
+                                { contract: 'KATXDcorpMemberProxy' }
+                            ],
                             setup: {
                                 deployed: {
                                     contract: 'KATXDcorpMemberProxy'

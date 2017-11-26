@@ -1,0 +1,70 @@
+
+
+
+geth --testnet --rpc --rpcport "8546" console
+web3.personal.unlockAccount("0xb1505aEaFe515A66c6975Bf4e62d9B5aa1cd26e4", "Sleutel80", 1500000)
+npm-run truffle migrate --network ropsten --reset
+
+
+geth --rpc --rpcport "8547"
+web3.personal.unlockAccount("0x3cAf983aCCccc2551195e0809B7824DA6FDe4EC8", "Sleutel80", 15000000)
+npm-run truffle migrate --network main
+
+
+Using network 'main'.
+
+Running migration: 1_initial_migration.js
+  Deploying Migrations...
+  ... 0x128a6f7bf660674ddf9793f990fada04cfef079c67e0a58b10d97ae1d7d694c1
+  Migrations: 0xe2a25a035c432847e96311cb48313222f595e1d8
+Saving artifacts...
+Running migration: 2_deploy_contracts.js
+  Running step...
+  Deploying KATXDcorpMemberProxy...
+  ... 0xa238989179998f8399ed379f75016c92ab5ef421bf2fca13c00d4ee2162e8356
+  KATXDcorpMemberProxy: 0xc45865b235a7c6693b9db5fed46ea8a3022d9b07
+  Deploying Whitelist...
+  ... 0x501cd8a1404ec71a9184fd9f3d66b1813843cf936736f697098f0ca944cfea0f
+  Whitelist: 0xe56cdc7ef7a70bde790d12f1c82b6efc74616ca0
+  Deploying KATMToken...
+  ... 0xe2d0ca48992a66b26435a4c2e3590bbc5d3310b3b2ef76807959501742ceff6b
+  KATMToken: 0x9c0e795ddf3b0655ab378a3551b36a036e93dc18
+  Deploying KATMCrowdsale...
+  ... 0x626e83f50b1011aeeb969ec4f58d033c7e609c956c9961cc2aa8ce926236c223
+  KATMCrowdsale: 0xc939a768bca271e0c69c2c530a8c20dc1cfb60be
+  ... 0x7be54ae910502062f797e5d69cf28446c9aec0934e6525866f5b4a2c04b07d8a
+  ... 0xa29b553425dba457d23d71f7ba68d51defe1f61a9c8711bbfac208958fa25b27
+  ... 0x392f5dbae15fd0d5cf547955d1f7aa50e90f03d7f4fe95a3b72cc974e870901e
+  ... 0x2464e78075422e8704f3c2d3a5c21713107b863fc6453fff2a36f320dd20a030
+  ... 0xaa8a0aca8cee74b22c17e897425a210783a8428bbb2b44e1df119a119879a10e
+  ... 0x5bffccdc07ad20346714860c3942caf5457c1b890e8209e317fa9decce28d983
+  Deploying KATXToken...
+  ... 0x9ee85f428d0f2530f1c4b3744c4e664dd21a54ac71827334eafd32bd7bcc4cba
+  KATXToken: 0x5fc5e27d5f22e609d80fd4b5df02740f73c57fe4
+  Deploying KATXCrowdsale...
+  ... 0x6007d957d340dea0ce299987239faf6c235a150dd945d414eea57ab1d3def469
+  KATXCrowdsale: 0x24c629d4913681b82ae7f9b30befd80e5229c36e
+  ... 0x285d694cd0f5a11fdf89fec678634309b8fa8118491768a6bef87286fccb9d1b
+  ... 0x922e487d4749380f3716b4acd76ff4d081bf4fbb34356f4f1abaf73176e6e7f6
+  ... 0xe2ade465d0aacc41a7feb304318783f141786da0926f9a144d456542e9bca94f
+  ... 0xeb48db47abd05e241c185e7b3d8f10e92d32f1a441173e3859936872e03b6f4d
+  ... 0x01b9e7c7aae8a90343bede4748e389496ec0b66010898552a4be5a02b5d5ab3b
+  Deploying KATMTokenChanger...
+  ... 0x7ae722fdc71ad5cfe86627dd28cb70da16186aa090dd9a2a480881ff440df491
+  KATMTokenChanger: 0xe3cc697219a23cdc24df5a3b7f35497b8f3f153a
+  ... 0xebd953a32ae0152f533d3068e722a56c4c1c7a7603aa1f497d431d16aff2bedb
+  ... 0xe4f5cbcf325c14c928f27c04cce68e2a422d1f82094546ce8391508382b7fa27
+  ... 0xa131c018d609f18677c8daadcaabdb50b7c435629dba7a8109ab71f2ddb8a503
+  ... 0x529dfda477b93ade2732441f8eb24d7e14fb09a4ce53aff92fb228e16630cc4b
+  ... 0x032ac51f6b3a3e4e821082775b3182ed45db3050c5207a9dba893c2e505c35be
+  ... 0x9dbf8a38ec12b95b07cef830ecd64ad9f32d713fa26a29a3e68756a3795f2713
+  ... 0x1c6066c3d88d752544c66052e3375ff41f2e910138d86e72fee72b4b5ba8d708
+  ... 0x461fdac8e9915d19c85f98e7644686272b7c6680beb29703501ce00fa11e8de5
+  ... 0xdf08f63d5a1bee83229868db4f3a1f77a678579c07a4c0c04d64b25da9553ce7
+  ... 0xf319c35262944980d2dba7db6dc4e7b6c2427354692328cd1c908f18b693a842
+  ... 0x3b14faf4c695a565c853df0c8e42bbcf7e477ce15e9f076bffe8c5ceac3081ec
+  ... 0xce15bddaa2cde51e30e81302735fbc7c6c8ce99cfe83c92b5b3da94df15d4924
+  ... 0x6f2a5da0a5bcbf82eaea3eaab9439b37d009d14114c18685146fb3e91b091698
+  ... 0x6756a53aa1fcaa06b15e434053374e0937cacddf3dd1bfdeae53a567b711f5eb
+  ... 0x294a32b6610d02f7e229b41172df37153a6edbc3b7fe6a8ba7ad701791ee2996
+

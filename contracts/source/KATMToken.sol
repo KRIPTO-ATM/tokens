@@ -24,7 +24,7 @@ contract KATMToken is ManagedToken, Observable, TokenRetriever {
     /**
      * Construct the managed security token
      */
-    function KATMToken() public ManagedToken("KATM Security", "KATM", 8, false) {}
+    function KATMToken() public ManagedToken("KATM Security", "KATM", 8, true) {}
 
 
     /**
