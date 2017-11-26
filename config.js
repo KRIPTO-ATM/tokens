@@ -391,13 +391,13 @@ module.exports = {
                             overwriteReleaseDate: false,
                             fixedReleaseDate: 0
                         }, {
-                            account: '0xb036Db53404c5Ae4519D8d8A28bfA60329D90E5F', // Kripto ATM reserve fund
+                            account: '0xbf3aC04F9f038659ec5e870256444369C3E7C0A1', // Kripto ATM reserve fund
                             tokens: 2500,
                             eth: 0,
                             overwriteReleaseDate: false,
                             fixedReleaseDate: 0
                         }, {
-                            account: 2, // Bounty
+                            account: '0x42c322e3599131d5b6167A8527e65Bc24E339F1a', // Bounty
                             tokens: 700,
                             eth: 0,
                             overwriteReleaseDate: true,
@@ -509,19 +509,19 @@ module.exports = {
                             overwriteReleaseDate: false,
                             fixedReleaseDate: 0
                         }, {
-                            account: '0x5F7caDf6Dcb63BBb59Bec7a3b107C122b80Db6f6', // Founders
+                            account: '0x7eeD9A4b5F3536B0Af90c0d33d1478531E010342', // Founders
                             tokens: 1000,
                             eth: 0,
                             overwriteReleaseDate: false,
                             fixedReleaseDate: 0
                         }, {
-                            account: 2, // Operations, team and bounty
+                            account: '0x57D9409E78c120A30313faC92AFEa9E3155e1EDF', // Operations, team and bounty
                             tokens: 1200,
                             eth: 0,
                             overwriteReleaseDate: true,
                             fixedReleaseDate: 0
                         }, {
-                            account: 3, // Wings.ai community
+                            account: '0x631cbc05c413e33A9cd2c1657BC723cE510AA3e3', // Wings.ai community
                             tokens: 200,
                             eth: 0,
                             overwriteReleaseDate: true,
@@ -568,7 +568,7 @@ module.exports = {
                                 },
                                 factor: {
                                     weight: 5,
-                                    contributed: 4
+                                    contributed: 6
                                 }
                             }
                         }
